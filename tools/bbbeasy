@@ -3,7 +3,7 @@
 #
 # BBBEasy open source platform - https://riadvice.tn/
 #
-# Copyright (c) 2022-2023 RIADVICE SUARL and by respective authors (see below).
+# Copyright (c) 2022-2024 RIADVICE SUARL and by respective authors (see below).
 #
 # This program is free software; you can redistribute it and/or modify it under the
 # terms of the GNU Affero General Public License as published by the Free Software
@@ -81,7 +81,6 @@ usage() {
   echo "#    --cleansessions                  Cleans sessions from the database"
   echo "#    --status                         Display running status of components"
   echo "#    --zip                            Zip up log files for reporting an error"
-  echo "#"
   echo "#========================================================================================================"
   echo
 }
@@ -110,11 +109,22 @@ need_production() {
 #
 # Display installed BBBEasy & servers version
 #
+validate_command() {
+  if ! command -v "$1" &>/dev/null; then
+    echo "✘ Error: Command $1 is not available. Please install it first."
+    exit 1
+  fi
+}
+
 display_version() {
   echo "■ BBBEasy     :  $GIT_VERSION"
-  echo "■ Nginx      :  $(nginx -v)"
+  validate_command nginx
+  echo "■ Nginx      :  $(nginx -v 2>&1)"
+  validate_command php
   echo "■ PHP        :  $(php -v | sed -n 1p)"
+  validate_command redis-server
   echo "■ Redis      :  $(redis-server --version)"
+  validate_command psql
   echo "■ PostgreSQL :  $(psql -V)"
 }
 
@@ -133,12 +143,16 @@ self_install() {
 #
 # Clean server status
 #
+validate_service() {
+  systemctl is-active --quiet "$1" && echo "✔ $1 service is active" || echo "✘ $1 service is inactive"
+}
+
 display_status() {
   units="nginx php-fpm postgresql redis"
   echo
   line='————————————————————►'
   for unit in $units; do
-    if [ $(pgrep -c "$unit") != 0 ]; then
+    if [ $(pgrep -c "$unit") -ne 0 ]; then
       printf "%s %s [✔ - UP]\n" $unit "${line:${#unit}}"
     else
       printf "%s %s [✘ - DOWN]\n" $unit "${line:${#unit}}"
@@ -162,13 +176,11 @@ clean_cache() {
 }
 
 #
-# Clean BBBEasy cache
+# Clean BBBEasy logs
 #
 clean_logs() {
   echo "► Cleaning logs"
-
   find "$BASEDIR/../bbbeasy-backend/logs/" ! -name '.gitkeep' -type f -exec rm -v {} \;
-
   echo "✔ Cleaned logs folder"
 }
 
@@ -185,10 +197,8 @@ clean_sessions() {
 #
 zip_logs() {
   echo "► Archiving logs"
-
   ARCHIVE="/home/$USER/logs/logs-$NOW.tar.gz"
   mkdir -p "/home/$USER/logs/"
-
   touch /tmp/empty
   tar cfv "$ARCHIVE" /tmp/empty
   tar rfv "$ARCHIVE" "$BASEDIR/../logs/" --exclude='.gitkeep'
@@ -209,8 +219,16 @@ fix_styles() {
 #
 # Enable backend installer app
 #
+validate_file() {
+  if [ ! -f "$1" ]; then
+    echo "✘ Error: $1 does not exist."
+    exit 1
+  fi
+}
+
 enable_installer() {
   echo "► Enabling backend installer app"
+  validate_file "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"
   if [ "$ENVIRONMENT" == "production" ]; then
     if grep -q -v "config.extension" "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"; then
       echo "config.extension = -install" >>"$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"
@@ -219,13 +237,12 @@ enable_installer() {
       printf "%s %s [✔ - DONE]\n"
     fi
   else
-    if [ $(grep -c "config.extension =" "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini") != 0 ]; then
-      #c cmd to replace the matched line in one go
+    if [ $(grep -c "config.extension =" "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini") -ne 0 ]; then
+      # c cmd to replace the matched line in one go
       sed -i '/config.extension =/ c config.extension = -install' "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"
       printf "%s %s [✔ - DONE]\n"
     fi
   fi
-
   echo "✔ Installer app enabled"
 }
 
@@ -234,19 +251,18 @@ enable_installer() {
 #
 enable_web() {
   echo "► Enabling backend webapp"
-  if [ $ENVIRONMENT == "production" ]; then
+  if [ "$ENVIRONMENT" == "production" ]; then
     sed -i '/^config\.extension/d' "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"
     sudo sed -i 's/installer/webapp/g' /etc/nginx/sites-available/bbbeasy
     sudo service nginx reload
     printf "%s %s [✔ - DONE]\n"
   else
     echo "► Enabling backend web app"
-    if [ $(grep -c "config.extension = -install" "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini") != 0 ]; then
+    if [ $(grep -c "config.extension = -install" "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini") -ne 0 ]; then
       sed -i '/config.extension = -install/ c config.extension =' "$BASEDIR/../bbbeasy-backend/app/config/config-$ENVIRONMENT.ini"
       printf "%s %s [✔ - DONE]\n"
     fi
   fi
-
   echo "✔ Web app enabled"
 }
 
@@ -255,7 +271,6 @@ enable_web() {
 #
 enable_tests() {
   echo "► Enabling unit tests"
-
   rm -rfv "$BASEDIR/../bbbeasy-backend/public/statera/"
   mkdir -pv "$BASEDIR/../bbbeasy-backend/public/statera/coverage/"
   mkdir -pv "$BASEDIR/../bbbeasy-backend/public/statera/result/"
@@ -266,7 +281,6 @@ enable_tests() {
   cp -Rv "$BASEDIR/../bbbeasy-backend/tests/ui/images" "$BASEDIR/../bbbeasy-backend/public/statera/result"
   cp "$BASEDIR/../bbbeasy-backend/vendor/bcosca/fatfree-core/code.css" "$BASEDIR/../bbbeasy-backend/public/statera/css/code.css"
   cp "$BASEDIR/../bbbeasy-backend/vendor/bcosca/fatfree-core/code.css" "$BASEDIR/../bbbeasy-backend/public/statera/result/css/code.css"
-
   echo "✔ Unit tests enabled"
 }
 
@@ -279,33 +293,26 @@ run_tests() {
   COVERAGE=$1
   USE_COVERAGE=""
   TEST_NAME="all"
-
   if [[ "$1" != "-c" ]]; then
     if [[ "$1" != "" ]]; then
       TEST_NAME=$1
     fi
-
     if [[ "$2" == "-c" ]]; then
       USE_COVERAGE="=withCoverage"
     fi
   fi
-
   if [[ "$1" == "-c" ]]; then
     USE_COVERAGE="=withCoverage"
     if [[ "$2" != "" ]]; then
       TEST_NAME=$2
     fi
   fi
-
   cd "$(dirname "$BASEDIR")/bbbeasy-backend/"
   # Revert database base to the initial state then create it again
   "vendor/bin/phinx" rollback -e testing -t 0 -vvv
   "vendor/bin/phinx" migrate -e testing -vvv
-
   cd "public"
-
   php index.php "/api?statera$USE_COVERAGE&test=$TEST_NAME" -o="../public/statera/result/index.html"
-
   SUCCESS=$(cat "statera/test.result")
   if [[ "$SUCCESS" == "success" ]]; then
     echo "✔ Test success"
@@ -339,9 +346,7 @@ install_dependencies() {
   cd "$(dirname "$BASEDIR")/bbbeasy-backend/"
   echo "► Updating composer dependencies"
   COMPOSER_ALLOW_SUPERUSER=1 composer install -o --no-dev
-
   sudo mkdir -p "$(dirname "$BASEDIR")/bbbeasy-frontend/build/"
-
   # Installer
   cd "$(dirname "$BASEDIR")/bbbeasy-frontend/"
   rm -rf dist/
@@ -349,7 +354,6 @@ install_dependencies() {
   NODE_ENV=production yarn install
   yarn build-installer
   cp -a "$BASEDIR/../bbbeasy-frontend/dist/." "$BASEDIR/../bbbeasy-frontend/build/installer/"
-
   # Installer
   cd "$(dirname "$BASEDIR")/bbbeasy-frontend/"
   rm -rf dist/
@@ -357,7 +361,6 @@ install_dependencies() {
   NODE_ENV=production yarn install
   yarn build
   cp -a "$BASEDIR/../bbbeasy-frontend/dist/." "$BASEDIR/../bbbeasy-frontend/build/webapp/"
-
   # Docs
   cd "$(dirname "$BASEDIR")/bbbeasy-docs/"
   yarn clear
@@ -378,7 +381,15 @@ run_migrations() {
 #
 # Generate code quality metrics
 #
+validate_tool() {
+  if ! command -v "$1" &>/dev/null; then
+    echo "✘ Error: $1 is not installed. Please install it to continue."
+    exit 1
+  fi
+}
+
 generate_metrics() {
+  validate_tool phpmetrics
   vendor/bin/phpmetrics --report-html="$BASEDIR/../bbbeasy-backend/public/metrics" "$BASEDIR/../bbbeasy-backend/app/src/"
 }
 
@@ -432,12 +443,10 @@ restart_services() {
 }
 
 run() {
-
   if [[ $# -eq 0 ]]; then
     usage
     exit 1
   fi
-
   # Environment
   HOST_TESTER=$(hostname)
   if [[ "$HOST_TESTER" == "bbbeasy.test" ]]; then
@@ -445,127 +454,104 @@ run() {
   else
     ENVIRONMENT="production"
   fi
-
   echo "► Detected environment: \`$ENVIRONMENT\`"
-
   while [[ $# -gt 0 ]]; do
-
     if [ "$1" = "--version" -o "$1" = "-version" -o "$1" = "-v" ]; then
       display_version
       shift
       continue
     fi
-
     if [ "$1" = "--selfinstall" -o "$1" = "-selfinstall" -o "$1" = "-si" ]; then
       self_install
       shift
       continue
     fi
-
     if [ "$1" = "--enableinstaller" -o "$1" = "-enableinstaller" -o "$1" = "-ei" ]; then
       enable_installer
       shift
       continue
     fi
-
     if [ "$1" = "--enableweb" -o "$1" = "-enableweb" -o "$1" = "-ew" ]; then
       enable_web
       shift
       continue
     fi
-
     if [ "$1" = "--enabletests" -o "$1" = "-enabletests" -o "$1" = "-e" ]; then
       enable_tests
       shift
       continue
     fi
-
     if [ "$1" = "--test" -o "$1" = "-test" -o "$1" = "-t" ]; then
       fix_styles
       run_tests "$2" "$3"
-
       shift
       shift
       continue
     fi
-
     if [ "$1" = "--check" -o "$1" = "-check" ]; then
       # todo: nginx config, mysql config, directories permissions...
       echo "not implemented yet"
       shift
       continue
     fi
-
     if [ "$1" = "--fix" -o "$1" = "-fix" -o "$1" = "-f" ]; then
       fix_styles
       shift
       continue
     fi
-
     if [ "$1" = "--migrate" -o "$1" = "-migrate" -o "$1" = "-m" ]; then
       run_migrations
       shift
       continue
     fi
-
     if [ "$1" = "--metrics" -o "$1" = "-metrics" -o "$1" = "-me" ]; then
       generate_metrics
       shift
       continue
     fi
-
     if [ "$1" = "--clean" -o "$1" = "-clean" ]; then
       clean_cache
       clean_logs
       shift
       continue
     fi
-
     if [ "$1" = "--cleansessions" -o "$1" = "-cleansessions" -o "$1" = "-cs" ]; then
       clean_sessions
       shift
       continue
     fi
-
     if [ "$1" = "--deploy" -o "$1" = "-deploy" -o "$1" = "-d" ]; then
       deploy_apps
       shift
       continue
     fi
-
     if [ "$1" = "--restart" -o "$1" = "-restart" -o "$1" = "-r" ]; then
       restart_services
       shift
       continue
     fi
-
     if [ "$1" = "--stop" -o "$1" = "-stop" -o "$1" = "-sp" ]; then
       stop_services
       shift
       continue
     fi
-
     if [ "$1" = "--start" -o "$1" = "-start" -o "$1" = "-sr" ]; then
       start_services
       shift
       continue
     fi
-
     if [ "$1" = "--status" -o "$1" = "-status" ]; then
       display_status
       shift
       continue
     fi
-
     if [ "$1" = "--zip" -o "$1" = "-zip" -o "$1" = "-z" ]; then
       zip_logs
       shift
       continue
     fi
-
     usage
     exit 1
-
   done
 }
 

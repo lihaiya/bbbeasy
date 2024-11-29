@@ -24,7 +24,7 @@
     "ext-bcmath": "*",
     "ext-fileinfo": "*",
     "bcosca/fatfree-core": "^3.8.2",
-    "ikkez/f3-cortex": "^1.7.6",
+    "ikkez/f3-cortex": "dev-master#44b30fd as 1.7.5",
     "ikkez/f3-mailer": "dev-master#972d715 as 1.2.3",
     "respect/validation": "^2.2.4",
     "nette/utils": "^v4.0.0",

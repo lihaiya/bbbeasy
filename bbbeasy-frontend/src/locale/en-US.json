@@ -285,7 +285,8 @@
     },
     "shortlink": {
         "label": "Shortlink",
-        "required": "The shortlink is required"
+        "required": "The shortlink is required",
+        "maxSize": "The shortlink cannot be longer than 256 characters"
     },
     "labels_required": "labels are required",
     "room-name-already-exist": "Room name already exists",

@@ -113,23 +113,33 @@ const RoomDetails = () => {
     const [open, setOpen] = React.useState<boolean>(false);
     const [roomRecordings, setRoomRecordings] = React.useState<RecordingType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(false);
-
+    const validateMessages = {
+        name: {
+            maxSize: t('room_name.maxSize'),
+            minSize: t('room_name.minSize'),
+        },
+        short_link: { maxSize: t('shortlink.maxSize'),},
+    };
     const currentUser: UserType = AuthService.getCurrentUser();
 
     const navigate = useNavigate();
 
-    const validateInput = (rule, value) => {
-        if (value && value.length > 256) {
-            const message = t('room_name.maxSize');
-            return Promise.reject(new Error(message));
-        } else if (value && value.length < 4) {
-            const message = t('room_name.minSize');
-            return Promise.reject(new Error(message));
-        }
-        return Promise.resolve();
-    };
+    const validateInput = (rule, value,fieldName) => {
+        if (!value) return Promise.resolve();
 
-    const validInput = () => {
+        if (fieldName === 'name') {
+            if (value.length < 4) {
+                return Promise.reject(new Error(validateMessages.name.minSize));
+            }
+            if (value.length > 256) {
+                return Promise.reject(new Error(validateMessages.name.maxSize));
+            }
+        }
+
+        if (fieldName === 'short_link' && value.length > 256) {
+            return Promise.reject(new Error(validateMessages.short_link.maxSize));
+        }
+
         return Promise.resolve();
     };
 
@@ -391,8 +401,10 @@ const RoomDetails = () => {
                         required: isRequired && true,
                         message: <Trans i18nKey={(messageItem ?? item) + '.required'} />,
                     },
-                    // Add a custom rule for the 'name' field only
-                    { validator: item === 'name' ? validateInput : validInput },
+                    // General verification rule
+                    {
+                        validator: (rule, value) => validateInput(rule, value, item),
+                    },
                 ]}
             >
                 {formItemNode}

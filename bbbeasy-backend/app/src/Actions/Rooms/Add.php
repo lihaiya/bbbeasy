@@ -56,7 +56,7 @@ class Add extends BaseAction
         $dataChecker = new DataChecker();
         $userId      = $body['user_id'];
         $dataChecker->verify($form['name'], Validator::notEmpty()->setName('name'));
-        $dataChecker->verify($form['shortlink'], Validator::notEmpty()->setName('shortlink'));
+        $dataChecker->verify($form['shortlink'], Validator::notEmpty()->length(1,255)->setName('shortlink'));
         $dataChecker->verify($form['preset'], Validator::notEmpty()->setName('preset'));
 
         $errorMessage = 'Room could not be added';

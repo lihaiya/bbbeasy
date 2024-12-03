@@ -19,14 +19,17 @@
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
-    if (onPerfEntry && onPerfEntry instanceof Function) {
-        import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-            getCLS(onPerfEntry);
-            getFID(onPerfEntry);
-            getFCP(onPerfEntry);
-            getLCP(onPerfEntry);
-            getTTFB(onPerfEntry);
-        });
+    if (typeof onPerfEntry === 'function') {
+        import('web-vitals')
+            .then((webVitals) => {
+                const { getCLS, getFID, getFCP, getLCP, getTTFB } = webVitals;
+                [getCLS, getFID, getFCP, getLCP, getTTFB].forEach((metric) => {
+                    metric(onPerfEntry);
+                });
+            })
+            .catch((error) => {
+                console.error('Error loading web-vitals:', error);
+            });
     }
 };
 

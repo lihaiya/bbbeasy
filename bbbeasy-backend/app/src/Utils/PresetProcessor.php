@@ -134,7 +134,7 @@ class PresetProcessor
         // $createParams->setOpenForEveryone($presetData->getData(General::GROUP_NAME, General::OPEN_FOR_EVERYONE));
         // anyone_can_start,open_for_everyone,logged_in_users_only
 
-        $createParams->setGuestPolicy($presetsData->getData(GuestPolicy::GROUP_NAME, GuestPolicy::POLICY));
+        $createParams->setGuestPolicy((string)$presetsData->getData(GuestPolicy::GROUP_NAME, GuestPolicy::POLICY));
         // configurable
 
         // language:default_language

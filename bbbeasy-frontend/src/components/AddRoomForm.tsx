@@ -280,6 +280,10 @@ export const AddRoomForm = (props: Props) => {
                                             required: true,
                                             message: <Trans i18nKey="shortlink.required" />,
                                         },
+                                        {
+                                            max: 255,
+                                            message: <Trans i18nKey="shortlink.maxSize" />,
+                                        },
                                     ]}
                                 >
                                     {readOnly ? (

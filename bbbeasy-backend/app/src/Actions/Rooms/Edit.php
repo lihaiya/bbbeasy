@@ -54,7 +54,7 @@ class Edit extends BaseAction
             $dataChecker = new DataChecker();
 
             $dataChecker->verify($form['name'], Validator::notEmpty()->setName('name'));
-            $dataChecker->verify($form['short_link'], Validator::notEmpty()->setName('short_link'));
+            $dataChecker->verify($form['short_link'], Validator::notEmpty()->length(1,255)->setName('short_link'));
             $dataChecker->verify($form['preset_id'], Validator::notEmpty()->setName('preset_id'));
 
             if ($dataChecker->allValid()) {

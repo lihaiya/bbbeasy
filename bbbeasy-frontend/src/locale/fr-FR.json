@@ -276,7 +276,8 @@
     },
     "shortlink": {
         "label": "Lien",
-        "required": "Le lien est obligatoire"
+        "required": "Le lien est obligatoire",
+        "maxSize": "Le lien ne peut pas dépasser 256 caractères"
     },
     "labels_required": "les étiquettes sont obligatoires",
     "room-name-already-exist": "Le nom du salle existe déjà",

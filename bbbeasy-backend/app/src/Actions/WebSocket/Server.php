@@ -66,7 +66,7 @@ class Server
     {
         $this->logger->debug('Agent ' . $agent->id() . ' connected');
 
-        $this->sendMessageToAllClients($agent->server(), sprintf('Client with ID %s joined', $agent->id()));
+        $this->sendMessageToAllClients($agent->server(), \sprintf('Client with ID %s joined', $agent->id()));
     }
 
     public function onDisconnect(Agent $agent): void
@@ -78,7 +78,7 @@ class Server
             socket_clear_error();
         }
 
-        $this->sendMessageToAllClients($agent->server(), sprintf('Client with ID %s left', $agent->id()));
+        $this->sendMessageToAllClients($agent->server(), \sprintf('Client with ID %s left', $agent->id()));
     }
 
     public function onIdle(Agent $agent): void
@@ -90,12 +90,12 @@ class Server
     {
         // This example is only utilizing text frames for application-specific payload.
         if (WS::Text !== $op) {
-            $this->logger->debug(sprintf('Agent %s sent a message with ignored opcode %s.', $agent->id(), $op));
+            $this->logger->debug(\sprintf('Agent %s sent a message with ignored opcode %s.', $agent->id(), $op));
 
             return;
         }
 
-        $this->logger->debug(sprintf('Agent %s sent a message: %s', $agent->id(), $data));
+        $this->logger->debug(\sprintf('Agent %s sent a message: %s', $agent->id(), $data));
 
         /**
          * Forward received message to all clients.
@@ -111,7 +111,7 @@ class Server
 
     public function onSend(Agent $agent, int $op, string $data): void
     {
-        $this->logger->debug(sprintf('Agent %s will receive a message: %s', $agent->id(), $data));
+        $this->logger->debug(\sprintf('Agent %s will receive a message: %s', $agent->id(), $data));
     }
 
     /**

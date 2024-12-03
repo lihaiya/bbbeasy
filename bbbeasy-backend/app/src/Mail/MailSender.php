@@ -146,7 +146,7 @@ class MailSender extends \Prefab
      */
     private function generateId(): string
     {
-        return sprintf(
+        return \sprintf(
             '<%s.%s@%s>',
             base_convert(microtime(), 10, 36),
             base_convert(DataUtils::generateRandomString(), 16, 36),

@@ -63,7 +63,7 @@ class PresetSetting extends BaseModel
                         $subCategory     = $class->getConstant($attributeName);
                         $subCategoryData = [
                             'name'    => $subCategory,
-                            'enabled' => (Layout::GROUP_NAME === $categoryName || General::ANYONE_CAN_START === $subCategory ) ? true : $enabled,
+                            'enabled' => (Layout::GROUP_NAME === $categoryName || General::ANYONE_CAN_START === $subCategory) ? true : $enabled,
                         ];
                         $categoryData['subcategories'][] = $subCategoryData;
                     }

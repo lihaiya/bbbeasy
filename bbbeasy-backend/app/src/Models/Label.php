@@ -116,7 +116,7 @@ class Label extends BaseModel
             return false;
         }
 
-      $this->logger->info($successMessage, ['label' => $this->toArray()]);
+        $this->logger->info($successMessage, ['label' => $this->toArray()]);
 
         return true;
     }
@@ -157,7 +157,7 @@ class Label extends BaseModel
         return $data;
     }
 
-    public function deleteRoomsLabels(int $roomId = null): bool
+    public function deleteRoomsLabels(?int $roomId = null): bool
     {
         $this->logger->info('Starting delete rooms labels transaction.');
         $this->db->begin();

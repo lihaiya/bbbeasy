@@ -29,7 +29,7 @@ use Colors\Color;
  */
 class CliUtils extends \Prefab
 {
-    private readonly \Colors\Color $console;
+    private readonly Color $console;
 
     public function __construct()
     {

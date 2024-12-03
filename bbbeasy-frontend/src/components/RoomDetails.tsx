@@ -118,13 +118,13 @@ const RoomDetails = () => {
             maxSize: t('room_name.maxSize'),
             minSize: t('room_name.minSize'),
         },
-        short_link: { maxSize: t('shortlink.maxSize'),},
+        short_link: { maxSize: t('shortlink.maxSize') },
     };
     const currentUser: UserType = AuthService.getCurrentUser();
 
     const navigate = useNavigate();
 
-    const validateInput = (rule, value,fieldName) => {
+    const validateInput = (rule, value, fieldName) => {
         if (!value) return Promise.resolve();
 
         if (fieldName === 'name') {

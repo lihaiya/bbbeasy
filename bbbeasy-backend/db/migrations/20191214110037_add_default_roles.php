@@ -45,6 +45,6 @@ final class AddDefaultRoles extends AbstractMigration
     public function down(): void
     {
         $table = $this->table('roles');
-        $table->getAdapter()->execute("DELETE from roles where name='" . \Enum\UserRole::ADMINISTRATOR . "' or name='" . \Enum\UserRole::LECTURER . "'");
+        $table->getAdapter()->execute("DELETE from roles where name='" . UserRole::ADMINISTRATOR . "' or name='" . UserRole::LECTURER . "'");
     }
 }

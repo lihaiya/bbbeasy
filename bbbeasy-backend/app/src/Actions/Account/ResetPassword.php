@@ -82,7 +82,7 @@ class ResetPassword extends BaseAction
             if ($sent) {
                 $this->renderJson(['message' => 'Please check your email to reset your password']);
             }
-            // @fixme: and if the mail wasn't sent?
+        // @fixme: and if the mail wasn't sent?
         } else {
             // email invalid or user no exist
             $message = 'User does not exist with this email';

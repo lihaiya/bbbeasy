@@ -28,6 +28,7 @@ use BigBlueButton\Enum\Role;
 use BigBlueButton\Parameters\CreateMeetingParameters;
 use BigBlueButton\Parameters\GetMeetingInfoParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
+use BigBlueButton\Responses\GetMeetingInfoResponse;
 use Enum\Presets\General;
 use Enum\ResponseCode;
 use Models\Preset;
@@ -134,7 +135,7 @@ class Start extends BaseAction
     }
 
     /**
-     * @return \BigBlueButton\Responses\GetMeetingInfoResponse
+     * @return GetMeetingInfoResponse
      */
     public function getMeetingInfo(string $meetingId, BigBlueButtonRequester $bbbRequester)
     {

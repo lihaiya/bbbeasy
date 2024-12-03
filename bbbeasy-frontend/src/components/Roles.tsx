@@ -57,7 +57,7 @@ type formType = {
 };
 
 interface EditableCellProps {
-    componentName:string;
+    componentName: string;
     editable: boolean;
     children: React.ReactNode;
     dataIndex: keyof RoleType;

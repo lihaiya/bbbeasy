@@ -168,7 +168,7 @@ abstract class Base extends \Prefab
         echo $object;
     }
 
-    public function renderXML(string $view = null, string $cacheKey = null, int $ttl = 0): void
+    public function renderXML(?string $view = null, ?string $cacheKey = null, int $ttl = 0): void
     {
         if (!empty($view)) {
             $this->view = $view;
@@ -330,7 +330,7 @@ abstract class Base extends \Prefab
         return true;
     }
 
-    private function parseXMLView(string $view = null): string
+    private function parseXMLView(?string $view = null): string
     {
         $xmlResponse = new \SimpleXMLElement(\Template::instance()->render($this->view . '.xml'));
 

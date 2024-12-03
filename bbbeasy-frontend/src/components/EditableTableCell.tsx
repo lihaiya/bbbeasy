@@ -29,7 +29,7 @@ import { RoleType } from '../types/RoleType';
 import { LabelType } from '../types/LabelType';
 
 type Props = {
-    componentName:string;
+    componentName: string;
     editing: boolean;
     children: React.ReactNode;
     dataIndex: string;

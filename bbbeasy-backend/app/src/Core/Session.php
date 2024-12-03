@@ -52,7 +52,7 @@ class Session extends \Prefab
      * @param null   $onsuspect
      * @param null   $key
      */
-    public function __construct(SQL $db = null, $table = 'sessions', $force = false, $onsuspect = null, $key = null)
+    public function __construct(?SQL $db = null, $table = 'sessions', $force = false, $onsuspect = null, $key = null)
     {
         $this->f3 = \Base::instance();
         $this->initLogger();

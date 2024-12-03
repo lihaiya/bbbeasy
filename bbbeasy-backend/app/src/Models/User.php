@@ -176,7 +176,7 @@ class User extends BaseModel
 
     // @todo: will be used to detect if the course is full or not yet
 
-    public function countActiveUsers(array $ids = null): int
+    public function countActiveUsers(?array $ids = null): int
     {
         $subQuery = '';
 
@@ -253,7 +253,7 @@ class User extends BaseModel
         return $this->saveDefaultPreset($userId);
     }
 
-    public function saveDefaultPreset($userId, $returnPreset = null): bool|string|Preset
+    public function saveDefaultPreset($userId, $returnPreset = null): bool|Preset|string
     {
         $preset       = new Preset();
         $preset->name = 'default';

@@ -224,7 +224,7 @@ class Room extends BaseModel
         return null;
     }
 
-    public function getRecordingByRecordId(string $recordId, bool $loadRecord = false): bool|array|null
+    public function getRecordingByRecordId(string $recordId, bool $loadRecord = false): null|array|bool
     {
         $bbbRequester    = new BigBlueButtonRequester();
         $recordingParams = new GetRecordingsParameters();

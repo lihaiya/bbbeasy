@@ -45,7 +45,7 @@ import { isEmpty } from 'lodash';
 const { Link } = Typography;
 
 interface EditableCellProps {
-    componentName:string;
+    componentName: string;
     editing: boolean;
     children: React.ReactNode;
     dataIndex: keyof LabelType;

@@ -45,6 +45,7 @@ import { isEmpty } from 'lodash';
 const { Link } = Typography;
 
 interface EditableCellProps {
+    componentName: string;
     editing: boolean;
     children: React.ReactNode;
     dataIndex: keyof LabelType;
@@ -145,6 +146,7 @@ const Labels = () => {
     const EditableCell: React.FC<EditableCellProps> = ({ editing, children, dataIndex, record, ...restProps }) => {
         return (
             <EditableTableCell
+                componentName="Labels"
                 editing={editing}
                 dataIndex={dataIndex}
                 record={record}

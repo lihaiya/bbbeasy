@@ -28,7 +28,7 @@ class SecurityUtils
 {
     public static string $GDPR_PATTERN = '/^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[\d]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/';
 
-    public static function credentialsAreCommon(string $username, string $email, string $password): string|null
+    public static function credentialsAreCommon(string $username, string $email, string $password): ?string
     {
         $user = new User();
 
@@ -45,7 +45,7 @@ class SecurityUtils
         return null;
     }
 
-    public static function isGdprCompliant(string $password): string|bool
+    public static function isGdprCompliant(string $password): bool|string
     {
         return !preg_match(self::$GDPR_PATTERN, $password) ? 'Password must contain at least one number, one uppercase letter, one lowercase letter, and one special character' : true;
     }

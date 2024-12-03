@@ -67,6 +67,7 @@ const { Link } = Typography;
 const { Option } = Select;
 
 interface EditableCellProps {
+    componentName: string;
     editing: boolean;
     children: React.ReactNode;
     dataIndex: keyof RecordingType;
@@ -159,6 +160,7 @@ const Recordings = () => {
         }
         return (
             <EditableTableCell
+                componentName="Recordings"
                 editing={editing}
                 dataIndex={dataIndex}
                 record={record}
@@ -183,7 +185,7 @@ const Recordings = () => {
         try {
             const formValues: object = await editForm.validateFields();
             setErrorsEdit({});
-           
+
             if (!CompareRecords(record, editForm.getFieldsValue(true))) {
                 setLoading(true);
                 RecordingsService.edit_recording(formValues, record.key)

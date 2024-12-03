@@ -29,6 +29,7 @@ import { RoleType } from '../types/RoleType';
 import { LabelType } from '../types/LabelType';
 
 type Props = {
+    componentName: string;
     editing: boolean;
     children: React.ReactNode;
     dataIndex: string;
@@ -47,6 +48,7 @@ type Props = {
 };
 
 const EditableTableCell: React.FC<Props> = ({
+    componentName,
     editing,
     children,
     dataIndex,
@@ -78,7 +80,7 @@ const EditableTableCell: React.FC<Props> = ({
     }
 
     const customFormItem = (index: string, customInputNode: JSX.Element) => {
-        if (index != 'description') {
+        if (componentName == 'Labels' && index == 'name') {
             return (
                 <Form.Item
                     name={index}

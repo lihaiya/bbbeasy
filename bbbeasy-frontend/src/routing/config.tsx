@@ -73,7 +73,6 @@ export const webRoutes: IRoute[] = [
         private: false,
         restricted: true,
     },
-
     {
         path: '/rooms',
         element: <Rooms />,

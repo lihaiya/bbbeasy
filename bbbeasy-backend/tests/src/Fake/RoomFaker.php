@@ -32,7 +32,7 @@ class RoomFaker
 {
     private static array $storage = [];
 
-    public static function create(User $user, Preset $preset, string $shortLink = null, $storageName = null)
+    public static function create(User $user, Preset $preset, ?string $shortLink = null, $storageName = null)
     {
         $faker            = Faker::create();
         $room             = new Room();

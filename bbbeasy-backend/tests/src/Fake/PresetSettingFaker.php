@@ -30,7 +30,7 @@ class PresetSettingFaker
 {
     private static array $storage = [];
 
-    public static function create(string $group = null, $storageName = null)
+    public static function create(?string $group = null, $storageName = null)
     {
         $faker                  = Faker::create();
         $presetSetting          = new PresetSetting();

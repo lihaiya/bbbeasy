@@ -109,18 +109,18 @@ class PresetProcessor
         $presetsData->setData(Webcams::GROUP_NAME, Webcams::MODERATOR_ALLOWED_CAMERA_EJECT, $preparePresetData[Webcams::GROUP_NAME][Webcams::MODERATOR_ALLOWED_CAMERA_EJECT]);
 
         // Get preset data to create meeting parameters
-        $createParams->setModeratorPassword((string)$presetsData->getData(Security::GROUP_NAME, Security::PASSWORD_FOR_MODERATOR) ?: DataUtils::generateRandomString());
-        $createParams->setAttendeePassword((string)$presetsData->getData(Security::GROUP_NAME, Security::PASSWORD_FOR_ATTENDEE) ?: DataUtils::generateRandomString());
+        $createParams->setModeratorPassword((string) $presetsData->getData(Security::GROUP_NAME, Security::PASSWORD_FOR_MODERATOR) ?: DataUtils::generateRandomString());
+        $createParams->setAttendeePassword((string) $presetsData->getData(Security::GROUP_NAME, Security::PASSWORD_FOR_ATTENDEE) ?: DataUtils::generateRandomString());
 
-        $createParams->setMuteOnStart((bool)$presetsData->getData(Audio::GROUP_NAME, Audio::USERS_JOIN_MUTED));
+        $createParams->setMuteOnStart((bool) $presetsData->getData(Audio::GROUP_NAME, Audio::USERS_JOIN_MUTED));
 
-        $createParams->setAllowModsToUnmuteUsers((bool)$presetsData->getData(Audio::GROUP_NAME, Audio::MODERATORS_ALLOWED_TO_UNMUTE_USERS));
+        $createParams->setAllowModsToUnmuteUsers((bool) $presetsData->getData(Audio::GROUP_NAME, Audio::MODERATORS_ALLOWED_TO_UNMUTE_USERS));
         // $createParams->setListenOnlyEnabled($presetData->getData(Audio::GROUP_NAME, Audio::LISTEN_ONLY_ENABLED));
         // $createParams->setSkipEchoTest($presetData->getData(Audio::GROUP_NAME, Audio::SKIP_ECHO_TEST));
 
-        $createParams->setLogo((string)$presetsData->getData(Branding::GROUP_NAME, Branding::LOGO));
-        $createParams->setBannerText((string)$presetsData->getData(Branding::GROUP_NAME, Branding::BANNER_TEXT));
-        $createParams->setBannerColor((string)$presetsData->getData(Branding::GROUP_NAME, Branding::BANNER_COLOR));
+        $createParams->setLogo((string) $presetsData->getData(Branding::GROUP_NAME, Branding::LOGO));
+        $createParams->setBannerText((string) $presetsData->getData(Branding::GROUP_NAME, Branding::BANNER_TEXT));
+        $createParams->setBannerColor((string) $presetsData->getData(Branding::GROUP_NAME, Branding::BANNER_COLOR));
         // $createParams->setUseAvatars($presetsData->getData(Branding::GROUP_NAME, Branding::USE_AVATARS));
 
         $createParams->setBreakoutRoomsEnabled((bool)$presetsData->getData(BreakoutRooms::GROUP_NAME, BreakoutRooms::CONFIGURABLE));
@@ -131,6 +131,7 @@ class PresetProcessor
         $createParams->setDuration((int)$presetsData->getData(General::GROUP_NAME, General::DURATION));
         $createParams->setMaxParticipants((int)$presetsData->getData(General::GROUP_NAME, General::MAXIMUM_PARTICIPANTS));
         $createParams->setWelcomeMessage((string)$presetsData->getData(General::GROUP_NAME, General::WELCOME));
+      
         // $createParams->setOpenForEveryone($presetData->getData(General::GROUP_NAME, General::OPEN_FOR_EVERYONE));
         // anyone_can_start,open_for_everyone,logged_in_users_only
 
@@ -140,23 +141,23 @@ class PresetProcessor
         // language:default_language
         // layout: presentation,participants,chat,navigation_bar,actions_bar
 
-        $createParams->setLearningDashboardEnabled((bool)$presetsData->getData(LearningDashboard::GROUP_NAME, LearningDashboard::CONFIGURABLE));
-        $createParams->setLearningDashboardCleanupDelayInMinutes((int)$presetsData->getData(LearningDashboard::GROUP_NAME, LearningDashboard::CLEANUP_DELAY));
+        $createParams->setLearningDashboardEnabled((bool) $presetsData->getData(LearningDashboard::GROUP_NAME, LearningDashboard::CONFIGURABLE));
+        $createParams->setLearningDashboardCleanupDelayInMinutes((int) $presetsData->getData(LearningDashboard::GROUP_NAME, LearningDashboard::CLEANUP_DELAY));
 
-        $createParams->setLockSettingsDisableCam((bool)$presetsData->getData(LockSettings::GROUP_NAME, LockSettings::WEBCAMS));
-        $createParams->setLockSettingsDisableMic((bool)$presetsData->getData(LockSettings::GROUP_NAME, LockSettings::MICROPHONES));
-        $createParams->setLockSettingsDisablePrivateChat((bool)$presetsData->getData(LockSettings::GROUP_NAME, LockSettings::PRIVATE_CHAT));
-        $createParams->setLockSettingsDisablePublicChat((bool)$presetsData->getData(LockSettings::GROUP_NAME, LockSettings::PUBLIC_CHAT));
-        $createParams->setLockSettingsDisableNote((bool)$presetsData->getData(LockSettings::GROUP_NAME, LockSettings::SHARED_NOTES));
+        $createParams->setLockSettingsDisableCam((bool) $presetsData->getData(LockSettings::GROUP_NAME, LockSettings::WEBCAMS));
+        $createParams->setLockSettingsDisableMic((bool) $presetsData->getData(LockSettings::GROUP_NAME, LockSettings::MICROPHONES));
+        $createParams->setLockSettingsDisablePrivateChat((bool) $presetsData->getData(LockSettings::GROUP_NAME, LockSettings::PRIVATE_CHAT));
+        $createParams->setLockSettingsDisablePublicChat((bool) $presetsData->getData(LockSettings::GROUP_NAME, LockSettings::PUBLIC_CHAT));
+        $createParams->setLockSettingsDisableNote((bool) $presetsData->getData(LockSettings::GROUP_NAME, LockSettings::SHARED_NOTES));
         if ($presetsData->getData(LockSettings::GROUP_NAME, LockSettings::LAYOUT)) {
             $disabledFeatures[] = 'layouts';
         }
 
         // $createParams->setPreUploadedPresentationOverrideDefault($presetsData->getData(Presentation::GROUP_NAME, Presentation::PRE_UPLOAD));
 
-        $createParams->setAutoStartRecording((bool)$presetsData->getData(Recording::GROUP_NAME, Recording::AUTO_START));
-        $createParams->setAllowStartStopRecording((bool)$presetsData->getData(Recording::GROUP_NAME, Recording::ALLOW_START_STOP));
-        $createParams->setRecord((bool)$presetsData->getData(Recording::GROUP_NAME, Recording::RECORD));
+        $createParams->setAutoStartRecording((bool) $presetsData->getData(Recording::GROUP_NAME, Recording::AUTO_START));
+        $createParams->setAllowStartStopRecording((bool) $presetsData->getData(Recording::GROUP_NAME, Recording::ALLOW_START_STOP));
+        $createParams->setRecord((bool) $presetsData->getData(Recording::GROUP_NAME, Recording::RECORD));
         if (!$presetsData->getData(Screenshare::GROUP_NAME, Screenshare::CONFIGURABLE)) {
             $disabledFeatures[] = 'screenshare';
         }
@@ -165,7 +166,7 @@ class PresetProcessor
         // Screenshare:configurable
         // UserExperience: keyboard_shortcuts,ask_for_feedback
 
-        $createParams->setWebcamsOnlyForModerator((bool)$presetsData->getData(Webcams::GROUP_NAME, Webcams::VISIBLE_FOR_MODERATOR_ONLY));
+        $createParams->setWebcamsOnlyForModerator((bool) $presetsData->getData(Webcams::GROUP_NAME, Webcams::VISIBLE_FOR_MODERATOR_ONLY));
         $createParams->setAllowModsToEjectCameras($presetsData->getData(Webcams::GROUP_NAME, Webcams::MODERATOR_ALLOWED_CAMERA_EJECT) ? true : false);
         // configurable,auto_share,skip_preview
 

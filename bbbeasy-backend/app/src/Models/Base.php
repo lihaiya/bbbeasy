@@ -167,7 +167,7 @@ abstract class Base extends Cortex
             if (\is_array($t)) {
                 $result[] = $this->toPostgreSqlArray($t);
             } else {
-                $t = str_replace('"', '\\"', $t); // escape double quote
+                $t = str_replace('"', '\"', $t); // escape double quote
                 if (!is_numeric($t)) { // quote only non-numeric values
                     $t = '"' . $t . '"';
                 }

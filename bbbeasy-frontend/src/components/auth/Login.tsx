@@ -16,7 +16,7 @@
  * with BBBEasy; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import AuthService from '../../services/auth.service';
 import Notifications from '../Notifications';
@@ -24,13 +24,12 @@ import Notifications from '../Notifications';
 import { Form, Button, Alert, Col, Row, Typography, Card } from 'antd';
 import { SmileOutlined } from '@ant-design/icons';
 
-import { Trans, withTranslation } from 'react-i18next';
+import { Trans, withTranslation, useTranslation } from 'react-i18next';
 import EN_US from '../../locale/en-US.json';
 import AddUserForm from '../AddUserForm';
 import { UserType } from '../../types/UserType';
 import { SessionType } from '../../types/SessionType';
 import { UserContext } from '../../lib/UserContext';
-import { t } from 'i18next';
 import settingsService from 'services/settings.service';
 import { SettingsType } from 'types/SettingsType';
 
@@ -41,76 +40,82 @@ type formType = {
     password: string;
 };
 
-const Login = () => {
-    const { setIsLogged, setCurrentUser, setCurrentSession } = React.useContext(UserContext);
-    const [successful, setSuccessful] = React.useState<boolean>(false);
-    const [message, setMessage] = React.useState<string>('');
-    const [email, setEmail] = React.useState<string>('');
-    const [logo, setLogo] = React.useState<string>('');
+const Login: React.FC = () => {
+    const { t } = useTranslation();
+    const { setIsLogged, setCurrentUser, setCurrentSession } = useContext(UserContext);
+    const [successful, setSuccessful] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [logo, setLogo] = useState<string>('');
 
     const initialValues: formType = {
         email: '',
         password: '',
     };
-    settingsService
-        .collect_settings()
-        .then((response) => {
-            console.log(response.data);
-            const settings: SettingsType = response.data;
-            setLogo(settings.logo);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+
+    useEffect(() => {
+        settingsService
+            .collect_settings()
+            .then((response) => {
+                const settings: SettingsType = response.data;
+                setLogo(settings.logo);
+            })
+            .catch((error) => {
+                console.error('Error fetching settings:', error);
+            });
+    }, []);
+
     const handleLogin = (formValue: formType) => {
         const { email, password } = formValue;
         setEmail(email);
         AuthService.login(email, password)
             .then((response) => {
-                if (
-                    response.data.user.username &&
-                    response.data.user.email &&
-                    response.data.user.role &&
-                    response.data.user.permissions &&
-                    response.data.session.PHPSESSID &&
-                    response.data.session.expires
-                ) {
-                    const user_infos: UserType = response.data.user;
-                    const session_infos: SessionType = response.data.session;
+                const { user, session } = response.data;
+                if (user && session) {
+                    const userInfos: UserType = user;
+                    const sessionInfos: SessionType = session;
 
                     Notifications.openNotificationWithIcon(
                         'success',
                         <>
-                            <Trans i18nKey="welcome-app" /> {' ' + user_infos.username + ' !'}
+                            <Trans i18nKey="welcome-app" /> {' ' + userInfos.username + ' !'}
                         </>,
                         <SmileOutlined className="text-color-primary" />,
                         2.5
                     );
-                    AuthService.addCurrentUser(user_infos);
-                    AuthService.addCurrentSession(session_infos);
-                    setCurrentUser(user_infos);
-                    setCurrentSession(session_infos);
+                    AuthService.addCurrentUser(userInfos);
+                    AuthService.addCurrentSession(sessionInfos);
+                    setCurrentUser(userInfos);
+                    setCurrentSession(sessionInfos);
                     setIsLogged(true);
                     setSuccessful(true);
                 }
             })
             .catch((error) => {
-                const responseData = error.response.data;
-                if (responseData.message) {
+                const responseData = error.response?.data;
+                if (responseData?.message) {
                     setSuccessful(false);
                     setMessage(responseData.message);
+                } else {
+                    console.error('Login error:', error);
                 }
             });
     };
 
     const handleReset = () => {
-        AuthService.reset_password(email).then((response) => {
-            const responseMessage = response.data.message;
-            Notifications.openNotificationWithIcon(
-                'success',
-                <Trans i18nKey={Object.keys(EN_US).filter((elem) => EN_US[elem] == responseMessage)} />
-            );
-        });
+        AuthService.reset_password(email)
+            .then((response) => {
+                const responseMessage = response.data.message;
+                Notifications.openNotificationWithIcon(
+                    'success',
+                    <Trans
+                        i18nKey={Object.keys(EN_US).find((elem) => EN_US[elem] === responseMessage) || 'default-key'}
+                    />
+                );
+            })
+            .catch((error) => {
+                console.error('Reset password error:', error);
+            });
     };
 
     return (
@@ -120,7 +125,7 @@ const Login = () => {
                     <Paragraph className="form-header text-center">
                         <img
                             className="form-img"
-                            src={logo ? process.env.REACT_APP_API_URL + '/' + logo : '/images/logo_02.png'}
+                            src={logo ? `${process.env.REACT_APP_API_URL}/${logo}` : '/images/logo_02.png'}
                             alt="Logo"
                         />
                         <Title level={4}>
@@ -139,7 +144,13 @@ const Login = () => {
                                         {t('attempts_exceeded')}
                                         <a onClick={handleReset}>{t('click_here')}</a> {t('email_instructions')}
                                     </>
-                                )) || <Trans i18nKey={Object.keys(EN_US).filter((elem) => EN_US[elem] == message)} />
+                                )) || (
+                                    <Trans
+                                        i18nKey={
+                                            Object.keys(EN_US).find((elem) => EN_US[elem] === message) || 'default-key'
+                                        }
+                                    />
+                                )
                             }
                             showIcon
                         />
@@ -150,7 +161,7 @@ const Login = () => {
                         name="login_form"
                         initialValues={initialValues}
                         requiredMark={false}
-                        scrollToFirstError={true}
+                        scrollToFirstError
                         validateTrigger="onSubmit"
                         onFinish={handleLogin}
                         onValuesChange={() => setMessage('')}

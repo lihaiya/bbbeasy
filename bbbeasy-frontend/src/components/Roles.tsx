@@ -57,6 +57,7 @@ type formType = {
 };
 
 interface EditableCellProps {
+    componentName: string;
     editable: boolean;
     children: React.ReactNode;
     dataIndex: keyof RoleType;
@@ -378,6 +379,7 @@ const Roles = () => {
 
         return (
             <EditableTableCell
+                componentName="Roles"
                 editing={editing}
                 dataIndex={dataIndex}
                 record={record}

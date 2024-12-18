@@ -11,7 +11,7 @@
 
 BBBEasy is an open-source  multipurpose meeting rooms manager for BigBlueButton.
 # BBBEasy中国区团队联络方式：
-![Uploading bbbeasy微信号.png…]()
+![bbbeasy微信号](https://github.com/user-attachments/assets/fba4d97e-5d9d-42d9-bcd8-c07cdbf6dfbe)
 
 
 ## Features

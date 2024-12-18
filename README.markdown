@@ -7,12 +7,12 @@
 <a href="https://github.com/riadvice/bbbeasy" target="__blank"><img alt="GitHub stars" src="https://img.shields.io/github/stars/riadvice/bbbeasy?style=social"></a>
 </p>
 
+# BBBEasy团队与中国区团队联络方式
+进行BigBlueButton大蓝钮的实施、部署、定制化开发、集群优化，如对接内部系统、电话系统、视频会议系统，进行logo设置，功能定制等，也支持SaaS云运维服务！
+![bbbeasy微信号](https://github.com/user-attachments/assets/fba4d97e-5d9d-42d9-bcd8-c07cdbf6dfbe)
 # BBBEasy
 
 BBBEasy is an open-source  multipurpose meeting rooms manager for BigBlueButton.
-# BBBEasy中国区团队联络方式：
-![bbbeasy微信号](https://github.com/user-attachments/assets/fba4d97e-5d9d-42d9-bcd8-c07cdbf6dfbe)
-
 
 ## Features
 
